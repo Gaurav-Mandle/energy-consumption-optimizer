@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE configurations
+.vscode/
+.idea/
+
+# Large files & Serialized models (to avoid committing large binary files to Git)
+*.pkl
+*.h5
+*.model
+*.pb
+*.pt
+*.onnx
+
+# Backup / Temporary directories
+New folder/
+
