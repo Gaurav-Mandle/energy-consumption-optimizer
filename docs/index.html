@@ -1264,9 +1264,9 @@
                             <div class="card-desc">Unscaled values lead models to bias towards humidity over temperature.</div>
                         </div>
                         <div class="card" style="border-left: 4px solid var(--accent-secondary);">
-                            <div style="font-size: 2rem; margin-bottom: 10px;">🌐</div>
-                            <div class="card-title" style="color: var(--accent-secondary);">API Delivery</div>
-                            <div class="card-desc">Grid operators needed a serialized model and web API deployment.</div>
+                            <div style="font-size: 2rem; margin-bottom: 10px;">💾</div>
+                            <div class="card-title" style="color: var(--accent-secondary);">Model Saving</div>
+                            <div class="card-desc">Trained models need to be serialized to disk for future predictions.</div>
                         </div>
                     </div>
                 </div>
@@ -1278,7 +1278,7 @@
                 <h2 class="slide-title">Machine Learning Pipeline Workflow</h2>
                 <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-around;">
                     <p style="font-size: 1.1rem; text-align: center; color: var(--text-secondary); max-width: 800px; margin: 0 auto;">
-                        To solve these issues, we designed a structured regression pipeline starting from raw data simulation all the way to cloud-deployable serialized models.
+                        To solve these issues, we designed a structured regression pipeline starting from raw data simulation all the way to serialized models.
                     </p>
                     
                     <div class="pipeline-flow">
@@ -1309,8 +1309,8 @@
                         </div>
                         <div class="pipeline-step">
                             <div class="step-num">6</div>
-                            <div class="step-name">Deployment</div>
-                            <div class="step-desc">Saved joblib serializers and outlined a Flask API.</div>
+                            <div class="step-name">Model Saving</div>
+                            <div class="step-desc">Saved joblib serializers for future load prediction reuse.</div>
                         </div>
                     </div>
                 </div>
@@ -1618,42 +1618,39 @@
                 </div>
             </section>
 
-            <!-- SLIDE 11: DEPLOYMENT PIPELINE -->
+            <!-- SLIDE 11: MODEL SERIALIZATION -->
             <section class="slide" id="slide-11">
-                <span class="slide-tag">Model Deployment</span>
-                <h2 class="slide-title">API & Production Architecture</h2>
+                <span class="slide-tag">Model Serialization</span>
+                <h2 class="slide-title">Saving & Exporting the Model</h2>
                 <div class="grid-2col top-aligned" style="grid-template-columns: 0.95fr 1.05fr;">
                     <div>
                         <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px;">
-                            After model training, deployment is required to provide real-time hourly load forecasting for smart grid adjustments.
+                            After model training, serialization is key to saving the trained parameters so they can be reloaded for predictions anytime without retraining.
                         </p>
                         
                         <div class="card" style="margin-bottom: 16px; padding: 18px;">
-                            <div style="font-weight:600; margin-bottom: 6px; font-size:0.95rem; color:var(--accent-primary);">API Response Payload (JSON)</div>
-                            <pre style="font-family:'Fira Code', monospace; font-size:0.75rem; background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; overflow-x:auto; color:var(--text-secondary);">
-{
-  "status": "success",
-  "prediction_kwh": 298.81,
-  "inputs": {
-    "hour": 18, "temp": 35.0, "is_weekend": 0
-  },
-  "deployed_model": "RandomForestRegressor"
-}</pre>
+                            <div style="font-weight:600; margin-bottom: 6px; font-size:0.95rem; color:var(--accent-primary);">Serialized Files (joblib)</div>
+                            <pre style="font-family:'Fira Code', monospace; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; overflow-x:auto; color:var(--text-secondary);">
+- electricity_model.pkl (Random Forest Regressor)
+- scaler.pkl (StandardScaler weights)
+
+Loaded offline using:
+joblib.load('electricity_model.pkl')</pre>
                         </div>
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 15px;">
                         <div class="card" style="padding: 16px; border-left: 3px solid var(--accent-primary);">
-                            <div style="font-weight:600; font-size:0.9rem; margin-bottom: 4px;">Step 1: Model Serialization (joblib)</div>
-                            <p style="font-size:0.8rem; color:var(--text-secondary);">Save the trained Random Forest model and standard scaler as binary files (<code style="font-family:'Fira Code', monospace;">electricity_model.pkl</code>, <code style="font-family:'Fira Code', monospace;">scaler.pkl</code>) to skip retraining.</p>
+                            <div style="font-weight:600; font-size:0.9rem; margin-bottom: 4px;">Step 1: Export Scaler State</div>
+                            <p style="font-size:0.8rem; color:var(--text-secondary);">Save the fitted standard scaler weights (<code style="font-family:'Fira Code', monospace;">scaler.pkl</code>) to ensure consistent normalization on new inputs.</p>
                         </div>
                         <div class="card" style="padding: 16px; border-left: 3px solid var(--accent-secondary);">
-                            <div style="font-weight:600; font-size:0.9rem; margin-bottom: 4px;">Step 2: Wrap in Flask/FastAPI REST Endpoint</div>
-                            <p style="font-size:0.8rem; color:var(--text-secondary);">Write an API script that takes JSON parameters, applies the loaded scaler transforms, and outputs the model load predictions.</p>
+                            <div style="font-weight:600; font-size:0.9rem; margin-bottom: 4px;">Step 2: Export Regressor Model</div>
+                            <p style="font-size:0.8rem; color:var(--text-secondary);">Save the trained Random Forest model trees (<code style="font-family:'Fira Code', monospace;">electricity_model.pkl</code>) to preserve the learned patterns.</p>
                         </div>
                         <div class="card" style="padding: 16px; border-left: 3px solid var(--accent-purple);">
-                            <div style="font-weight:600; font-size:0.9rem; margin-bottom: 4px;">Step 3: Deploy to Cloud (AWS / Heroku)</div>
-                            <p style="font-size:0.8rem; color:var(--text-secondary);">Deploy the web service inside a Docker container to AWS EC2 or SageMaker. The city dashboard calls the REST API in real time.</p>
+                            <div style="font-weight:600; font-size:0.9rem; margin-bottom: 4px;">Step 3: Perform Offline Inference</div>
+                            <p style="font-size:0.8rem; color:var(--text-secondary);">Load both serializers in any Python environment to make local load predictions without needing to rebuild the training pipeline.</p>
                         </div>
                     </div>
                 </div>

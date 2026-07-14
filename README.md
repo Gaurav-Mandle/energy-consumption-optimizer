@@ -60,14 +60,4 @@ You can open and run the Jupyter notebook:
 jupyter notebook energy_consumption_optimizer.ipynb
 ```
 
----
 
-## 📦 Model Deployment Concept
-After training, the Random Forest model and `StandardScaler` are serialized and saved:
-- `electricity_model.pkl`
-- `scaler.pkl`
-
-These files can be deployed using a web framework (like **Flask** or **FastAPI**) to create an API endpoint:
-1. The API receives real-time features (hour, temperature, etc.).
-2. Features are scaled using the saved `scaler.pkl`.
-3. Predictions are made using `electricity_model.pkl` and returned back to the city grid operators.
